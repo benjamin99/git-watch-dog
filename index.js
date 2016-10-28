@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 'use strict';
 
 const program = require('commander');
@@ -12,5 +14,13 @@ program.command('lock <file>')
 program.command('release <file>')
   .description('to set --no-assume-unchanged on the specified file')
   .action(operations.release);
+
+program.command('update')
+  .description('to update the --assume-unchanged list')
+  .action(operations.update);
+
+program.command('git-list')
+  .description('list the files with --assume-unchanged')
+  .action(operations.list);
 
 program.parse(process.argv);

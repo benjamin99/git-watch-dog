@@ -8,33 +8,42 @@ const yaml = require('yamljs');
 const readFile = Promise.promisify(fs.readFile);
 const writeFile = Promise.promisify(fs.writeFile);
 
-const RECORD_FILE = '.watchdog.yml';
+const RECORD_FILE = '.git-watch-dog.yml';
+
+function *load() {
+  const content = yield readFile(RECORD_FILE, 'utf-8');
+  return yaml.parse(content) || [];
+}
+
+function *dump(records) {
+  const content = yaml.stringify(records);
+  yield writeFile(RECORD_FILE, content);
+}
+
+exports.load = load;
 
 exports.append = function*(file) {
   let records;
   try {
-    const content = yield readFile(RECORD_FILE, 'utf-8');
-    records = yaml.parse(content) || [];
+    records = yield load();
   } catch (error) {
     console.error('error: ' + error);
     records = [];
   }
 
   records.push(file);
-  const result = yaml.stringify(_.uniq(records));
-  yield writeFile(RECORD_FILE, result);
+  records = _.uniq(records);
+  yield dump(records);
 };
 
 exports.remove = function*(file) {
   let records;
   try {
-    const content = yield readFile(RECORD_FILE, 'utf-8');
-    records = yaml.parse(content);
+    records = yield load();
   } catch (error) {
     return;
   }
 
   records = _.without(records, file);
-  const result = yaml.stringify(records);
-  yield writeFile(RECORD_FILE, result);
+  yield dump(records);
 };

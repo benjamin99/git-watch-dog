@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cat .git-watch-dog.yml
+
+git-watch-dog update

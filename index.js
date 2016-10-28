@@ -4,6 +4,7 @@
 
 const program = require('commander');
 const operations = require('./bin/operations');
+const hooks = require('./bin/hooks');
 
 program.version('0.1.0');
 
@@ -22,5 +23,9 @@ program.command('update')
 program.command('git-list')
   .description('list the files with --assume-unchanged')
   .action(operations.list);
+
+program.command('init')
+  .description('setup the related git hook in the current repository')
+  .action(hooks.setup);
 
 program.parse(process.argv);

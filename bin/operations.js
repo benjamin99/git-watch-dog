@@ -78,9 +78,13 @@ exports.update = function() {
 
   co(function*() {
     // load the currently --assume-unchanged list:
-    const result = yield execWithLog(listCommand());
-    const locked = _.map(result.split(EOL).slice(0, -1), item => item.slice(2));
-
+    let locked;
+    try {
+      const result = yield execWithLog(listCommand());
+      locked = _.map(result.split(EOL).slice(0, -1), item => item.slice(2));
+    } catch (error) {
+      console.log('ERROR: ' + error);
+    }
     // load the targets from the records:
     const list = yield records.load();
 
